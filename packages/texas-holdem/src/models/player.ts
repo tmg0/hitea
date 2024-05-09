@@ -1,5 +1,6 @@
 import { nanoid } from 'nanoid'
 import type { Card } from './card'
+import type { TexasHoldem } from './game'
 
 export type PlayerStatus = 'active' | 'folded' | 'all-in'
 
@@ -10,6 +11,8 @@ export class Player {
   public hand: Card[] = []
   public bet: number = 0
   public status: PlayerStatus = 'active'
+
+  private _game: TexasHoldem
 
   constructor(options: Partial<Player> = {}) {
     if (options.id)
@@ -26,5 +29,15 @@ export class Player {
 
   resetBet() {
     this.bet = 0
+  }
+
+  join(game: TexasHoldem) {
+    this._game = game
+  }
+
+  call() {}
+
+  raise(_bet: number) {
+
   }
 }

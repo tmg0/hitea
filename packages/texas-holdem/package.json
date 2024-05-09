@@ -1,0 +1,6 @@
+{
+  "name": "@hitea/texas-holdem",
+  "dependencies": {
+    "nanoid": "^5.0.7"
+  }
+}

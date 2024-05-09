@@ -1,14 +1,17 @@
 {
   "name": "hitea",
+  "type": "module",
   "version": "0.0.0",
   "description": "Tabletop game center for high tea time.",
-  "main": "index.js",
-  "scripts": {
-    "test": "vitest"
-  },
+  "author": "tmg0",
+  "license": "MIT",
+  "homepage": "https://github.com/tmg0/hitea#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tmg0/hitea.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tmg0/hitea/issues"
   },
   "keywords": [
     "tabletop",
@@ -16,12 +19,10 @@
     "terminal",
     "poker"
   ],
-  "author": "tmg0",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/tmg0/hitea/issues"
+  "main": "index.js",
+  "scripts": {
+    "test": "vitest"
   },
-  "homepage": "https://github.com/tmg0/hitea#readme",
   "devDependencies": {
     "@antfu/eslint-config": "^2.17.0",
     "@types/node": "^20.12.11",

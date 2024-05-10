@@ -9,6 +9,8 @@ export type Event = 'call' | 'raise' | 'fold' | 'check' | 'all-in'
 
 export class Game {
   join(..._: any) {}
+  leave(..._: any) {}
+  get isEmpty(): boolean { return true }
   get data(): any { return this }
 }
 
@@ -150,6 +152,10 @@ export class TexasHoldem extends Game {
   handler(event: Event, args: any) {
     if (event === 'raise')
       this.player.raise(args)
+  }
+
+  get isEmpty() {
+    return this.players.length < 1
   }
 
   get unfoldedPlayers() {

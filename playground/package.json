@@ -1,0 +1,14 @@
+{
+  "name": "@hitea/playground",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "jiti src/index.ts",
+    "vitest": "vitest"
+  },
+  "dependencies": {
+    "consola": "^3.2.3",
+    "jiti": "^1.21.0",
+    "mri": "^1.2.0",
+    "socket.io-client": "^4.7.5"
+  }
+}

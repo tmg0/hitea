@@ -1,12 +1,12 @@
 {
   "name": "@hitea/texas-holdem",
   "scripts": {
-    "dev": "jiti src/index.ts"
+    "dev": "jiti src/index.ts",
+    "build": "tsup"
   },
   "dependencies": {
     "nanoid": "^5.0.7",
     "socket.io": "^4.7.5",
-    "socket.io-client": "^4.7.5",
     "unstorage": "^1.10.2"
   },
   "devDependencies": {

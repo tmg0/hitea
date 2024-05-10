@@ -22,12 +22,13 @@ class Response {
 
 io.on('connection', async (socket) => {
   const query = getQuery<ConnectionQuery>(socket)
-  const key = `player:${query.name}`
-  const cache = await storage.getItem(key)
-  const player = cache ?? new Player({ id: socket.id, name: query.name })
+  const key = `db:${query.name}`
+  const cache: Partial<Player> = (await storage.getItem(key)) ?? {}
+  const player = new Player({ ...cache, id: socket.id, name: query.name })
+  await storage.setItem(key, player.data)
 
   socket.on('get:rooms', () => {
-    socket.emit('get:rooms', rooms.map(({ data }) => data))
+    socket.emit('get:rooms', new Response(rooms.map(({ data }) => data)))
   })
 
   socket.on('post:room', (data: Partial<Room> = {}) => {

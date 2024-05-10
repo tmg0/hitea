@@ -1,3 +1,4 @@
+import type { Socket } from 'socket.io'
 import { Server } from 'socket.io'
 import { PORT } from './consts'
 import { Room } from './models/room'
@@ -20,6 +21,21 @@ class Response {
   ) {}
 }
 
+function leaveTheRoom(socket: Socket, player: Player, room?: Room) {
+  if (!room)
+    return
+  room.game.leave(player)
+  socket.leave(room.id)
+  io.to(room.id).emit('get:room', new Response(room.data))
+  if (!room.game.isEmpty)
+    return
+  const _id = room.id
+  const _idx = rooms.findIndex(({ id }) => id === _id)
+  if (_idx < 0)
+    return
+  rooms.splice(_idx, 1)
+}
+
 io.on('connection', async (socket) => {
   let room: Room | undefined
   const query = getQuery<ConnectionQuery>(socket)
@@ -27,6 +43,10 @@ io.on('connection', async (socket) => {
   const cache: Partial<Player> = (await storage.getItem(key)) ?? {}
   const player = new Player({ ...cache, id: socket.id, name: query.name })
   await storage.setItem(key, player.data)
+
+  socket.on('disconnect', () => {
+    leaveTheRoom(socket, player, room)
+  })
 
   socket.on('get:rooms', () => {
     socket.emit('get:rooms', new Response(rooms.map(({ data }) => data)))
@@ -47,6 +67,8 @@ io.on('connection', async (socket) => {
   })
 
   socket.on('post:room.game.player', (data: { roomId: string }) => {
+    if (room)
+      leaveTheRoom(socket, player, room)
     room = rooms.find(({ id }) => id === data.roomId)
     if (!room)
       return
@@ -56,18 +78,7 @@ io.on('connection', async (socket) => {
   })
 
   socket.on('delete:room.game.player', () => {
-    if (!room)
-      return
-    room.game.leave(player)
-    socket.leave(room.id)
-    io.to(room.id).emit('get:room', new Response(room.data))
-    if (!room.game.isEmpty)
-      return
-    const _id = room.id
-    const _idx = rooms.findIndex(({ id }) => id === _id)
-    if (_idx < 0)
-      return
-    rooms.splice(_idx, 1)
+    leaveTheRoom(socket, player, room)
   })
 
   socket.on('post:message', (data: any) => {

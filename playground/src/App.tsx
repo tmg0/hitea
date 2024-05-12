@@ -1,16 +1,14 @@
 import React, { useState } from 'react'
-import { Box } from 'ink'
-import { TextInput } from '@inkjs/ui'
+import RouterProvider from './components/RouterProvider'
+import RouterView from './components/RouterView'
+import { routes } from './router'
 
 export default function App() {
-  const [_, setValue] = useState('')
+  const [route] = useState('/sign-in')
 
   return (
-    <Box flexDirection="column" gap={1}>
-      <TextInput
-        placeholder="Enter your name..."
-        onChange={setValue}
-      />
-    </Box>
+    <RouterProvider route={route} routes={routes}>
+      <RouterView />
+    </RouterProvider>
   )
 }

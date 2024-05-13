@@ -6,6 +6,7 @@ import type { Socket } from 'socket.io-client'
 import ioc from 'socket.io-client'
 import consola from 'consola'
 import App from './App'
+import SocketProvider from './components/SocketProvider'
 
 const argv = process.argv.slice(2)
 const { h: host, p: port, n: name } = mri(argv)
@@ -20,10 +21,10 @@ function connected(client: Socket): Promise<void> {
 
 function getRooms(client: Socket): Promise<any[]> {
   return new Promise((resolve) => {
-    client.on('get:rooms', ({ data }) => {
+    client.on('room:list', ({ data }) => {
       resolve(data)
     })
-    client.emit('get:rooms')
+    client.emit('room:list')
   })
 }
 
@@ -39,11 +40,11 @@ async function roomEventLoop(client: Socket) {
 
   if (!roomId) {
     const roomName = await consola.prompt('Room name:')
-    client.emit('post:room', { name: roomName })
+    client.emit('room:create', { name: roomName })
   }
 
   if (roomId)
-    client.emit('post:room.game.player', { roomId })
+    client.emit('game:join', { roomId })
 
   const event = await consola.prompt('Action:', {
     type: 'select',
@@ -58,11 +59,11 @@ async function roomEventLoop(client: Socket) {
 }
 
 async function main() {
-  const playerName = name || (await consola.prompt('What is your name?'))
-  const client = ioc(`http://${host}:${port}`, { query: { name: playerName } })
-  await connected(client)
-  await roomEventLoop(client)
-  render(<App />)
+  render(
+    <SocketProvider host={host} port={port} name={name}>
+      <App />
+    </SocketProvider>,
+  )
 }
 
 main()

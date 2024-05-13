@@ -4,10 +4,10 @@ import RouterView from './components/RouterView'
 import { routes } from './router'
 
 export default function App() {
-  const [route] = useState('/sign-in')
+  const [path, setPath] = useState('/sign-in')
 
   return (
-    <RouterProvider route={route} routes={routes}>
+    <RouterProvider path={path} routes={routes} setPath={setPath}>
       <RouterView />
     </RouterProvider>
   )

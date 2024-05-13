@@ -26,7 +26,7 @@ function leaveTheRoom(socket: Socket, player: Player, room?: Room) {
     return
   room.game.leave(player)
   socket.leave(room.id)
-  io.to(room.id).emit('get:room', new Response(room.data))
+  io.to(room.id).emit('room:get', new Response(room.data))
   if (!room.game.isEmpty)
     return
   const _id = room.id
@@ -48,25 +48,25 @@ io.on('connection', async (socket) => {
     leaveTheRoom(socket, player, room)
   })
 
-  socket.on('get:rooms', () => {
-    socket.emit('get:rooms', new Response(rooms.map(({ data }) => data)))
+  socket.on('room:list', () => {
+    socket.emit('room:list', new Response(rooms.map(({ data }) => data)))
   })
 
-  socket.on('get:player', () => {
-    socket.emit('get:player', new Response(player.data))
+  socket.on('player:get', () => {
+    socket.emit('player:get', new Response(player.data))
   })
 
-  socket.on('post:room', (data: Partial<Room> = {}) => {
+  socket.on('room:create', (data: Partial<Room> = {}) => {
     if (room)
       return
     room = new Room({ ...data, game: new TexasHoldem() })
     rooms.push(room)
     room.game.join(player)
     socket.join(room.id)
-    io.to(room.id).emit('get:room', new Response(room.data))
+    io.to(room.id).emit('room:get', new Response(room.data))
   })
 
-  socket.on('post:room.game.player', (data: { roomId: string }) => {
+  socket.on('game:join', (data: { roomId: string }) => {
     if (room)
       leaveTheRoom(socket, player, room)
     room = rooms.find(({ id }) => id === data.roomId)
@@ -74,17 +74,17 @@ io.on('connection', async (socket) => {
       return
     room.game.join(player)
     socket.join(room.id)
-    io.to(room.id).emit('get:room', new Response(room.data))
+    io.to(room.id).emit('room:get', new Response(room.data))
   })
 
-  socket.on('delete:room.game.player', () => {
+  socket.on('room:leave', () => {
     leaveTheRoom(socket, player, room)
   })
 
-  socket.on('post:message', (data: any) => {
+  socket.on('message:send', (data: any) => {
     if (!room)
       return
-    io.to(room.id).emit('get:message', new Response(data))
+    io.to(room.id).emit('message:get', new Response(data))
   })
 })
 

@@ -2,7 +2,8 @@ import { useContext } from 'react'
 import { RouterContext } from './RouterProvider'
 
 export default function RouterView() {
-  const { route, routes } = useContext(RouterContext)
-  const Component = routes.find(({ path }) => path === route)?.component?.()
+  const ctx = useContext(RouterContext)
+  const Component = ctx.routes.find(({ path }) => path === ctx.path)?.component?.()
+
   return Component
 }

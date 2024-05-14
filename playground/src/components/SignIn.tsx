@@ -1,36 +1,18 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { Box, Text } from 'ink'
 import { Alert, Select, TextInput } from '@inkjs/ui'
-import type { Socket } from 'socket.io-client'
-import ioc from 'socket.io-client'
 import useRouter from '../hooks/useRouter'
 import { StoreContext } from './StoreProvider'
 
-function connected(client: Socket): Promise<void> {
-  return new Promise((resolve) => {
-    client.on('connect', () => {
-      resolve()
-    })
-  })
-}
-
 function NameInput() {
   const ctx = useContext(StoreContext)
-
-  async function handleSubmit(name: string) {
-    const client = ioc(`http://${ctx.host}:${ctx.port}`, { query: { name } })
-    ctx.setClient?.(client)
-    ctx.setName?.(name)
-    await connected(client!)
-    ctx.setIsConnected?.(true)
-  }
 
   return (
     <Box flexDirection="row" gap={1}>
       <Text>Name: </Text>
       <TextInput
         placeholder="Enter your name..."
-        onSubmit={name => handleSubmit(name)}
+        onSubmit={ctx.setName}
       />
     </Box>
   )

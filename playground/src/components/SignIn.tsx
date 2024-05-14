@@ -91,7 +91,7 @@ export default function SignIn() {
 
   useEffect(() => {
     if (roomId)
-      router.push({ path: '/room' })
+      router.push('/room')
   }, [roomId])
 
   return (

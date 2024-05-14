@@ -1,8 +1,8 @@
 import type { PropsWithChildren } from 'react'
-import React, { createContext, useMemo } from 'react'
+import React, { createContext, useEffect, useMemo, useState } from 'react'
 import type { Route } from '../hooks/useRouter'
 
-interface Props {
+interface Context {
   path: string
   routes: Route[]
   setPath?: (value: string) => void
@@ -13,14 +13,16 @@ const defaults = {
   routes: [],
 }
 
-export const RouterContext = createContext<Props>(defaults)
+export const RouterContext = createContext<Context>(defaults)
 
-export default function RouterProvider(props: PropsWithChildren<Props>) {
+export default function RouterProvider(props: PropsWithChildren<Pick<Context, 'routes'>>) {
+  const [path, setPath] = useState('/sign-in')
+
   const value = useMemo(() => ({
-    path: props.path,
+    path,
     routes: props.routes,
-    setPath: props.setPath,
-  }), [props.path, props.routes])
+    setPath,
+  }), [path, props.routes])
 
   return (
     <RouterContext.Provider value={value}>

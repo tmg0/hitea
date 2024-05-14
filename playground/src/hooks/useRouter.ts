@@ -1,5 +1,7 @@
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import { RouterContext } from '../components/RouterProvider'
+
+const isString = (value: any): value is string => typeof value === 'string'
 
 export interface Route {
   name?: string
@@ -11,8 +13,8 @@ export interface Route {
 export default function useRouter() {
   const ctx = useContext(RouterContext)
 
-  function push(route: Omit<Route, 'component'>) {
-    ctx.setPath?.(route.path!)
+  function push(route: string | Omit<Route, 'component'>) {
+    ctx.setPath?.(isString(route) ? route : route.path!)
   }
 
   return {

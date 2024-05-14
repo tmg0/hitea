@@ -18,11 +18,11 @@ function NameInput() {
   )
 }
 
-interface RoomNameInputProps {
+interface RoomInputProps {
   onSubmit: (value: string) => void
 }
 
-function RoomNameInput(props: RoomNameInputProps) {
+function RoomInput(props: RoomInputProps) {
   const ctx = useContext(StoreContext)
 
   function handleSubmit(name: string) {
@@ -98,7 +98,7 @@ export default function SignIn() {
     <Box flexDirection="column" gap={1}>
       {!ctx.name ? <NameInput /> : undefined}
       {ctx.isConnected && ctx.name && !isNew ? <RoomSelector onSelect={setRoomId} setIsNew={setIsNew} /> : undefined}
-      {ctx.isConnected && isNew ? <RoomNameInput onSubmit={setRoomId} /> : undefined}
+      {ctx.isConnected && isNew ? <RoomInput onSubmit={setRoomId} /> : undefined}
     </Box>
   )
 }

@@ -19,16 +19,16 @@ const defaults = {
   isConnected: false,
 }
 
-export const SocketContext = createContext<Props>(defaults)
+export const StoreContext = createContext<Props>(defaults)
 
-export default function SocketProvider(props: PropsWithChildren<Omit<Props, 'isConnected'>>) {
+export default function StoreProvider(props: PropsWithChildren<Omit<Props, 'isConnected'>>) {
   const [name, setName] = useState(props.name)
   const [client, setClient] = useState<Socket | undefined>(undefined)
   const [isConnected, setIsConnected] = useState(false)
 
   return (
-    <SocketContext.Provider value={{ ...props, name, client, isConnected, setName, setIsConnected, setClient }}>
+    <StoreContext.Provider value={{ ...props, name, client, isConnected, setName, setIsConnected, setClient }}>
       {props.children}
-    </SocketContext.Provider>
+    </StoreContext.Provider>
   )
 }

@@ -6,7 +6,7 @@ import type { Socket } from 'socket.io-client'
 import ioc from 'socket.io-client'
 import consola from 'consola'
 import App from './App'
-import SocketProvider from './components/SocketProvider'
+import StoreProvider from './components/StoreProvider'
 
 const argv = process.argv.slice(2)
 const { h: host, p: port, n: name } = mri(argv)
@@ -60,9 +60,9 @@ async function roomEventLoop(client: Socket) {
 
 async function main() {
   render(
-    <SocketProvider host={host} port={port} name={name}>
+    <StoreProvider host={host} port={port} name={name}>
       <App />
-    </SocketProvider>,
+    </StoreProvider>,
   )
 }
 

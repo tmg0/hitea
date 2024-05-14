@@ -4,7 +4,7 @@ import { Alert, Select, TextInput } from '@inkjs/ui'
 import type { Socket } from 'socket.io-client'
 import ioc from 'socket.io-client'
 import useRouter from '../hooks/useRouter'
-import { SocketContext } from './SocketProvider'
+import { StoreContext } from './StoreProvider'
 
 function connected(client: Socket): Promise<void> {
   return new Promise((resolve) => {
@@ -15,7 +15,7 @@ function connected(client: Socket): Promise<void> {
 }
 
 function NameInput() {
-  const ctx = useContext(SocketContext)
+  const ctx = useContext(StoreContext)
 
   async function handleSubmit(name: string) {
     const client = ioc(`http://${ctx.host}:${ctx.port}`, { query: { name } })
@@ -41,7 +41,7 @@ interface RoomNameInputProps {
 }
 
 function RoomNameInput(props: RoomNameInputProps) {
-  const ctx = useContext(SocketContext)
+  const ctx = useContext(StoreContext)
 
   function handleSubmit(name: string) {
     ctx.client?.emit('room:create', { name })
@@ -67,7 +67,7 @@ interface RoomSelectorProps {
 }
 
 function RoomSelector(props: RoomSelectorProps) {
-  const ctx = useContext(SocketContext)
+  const ctx = useContext(StoreContext)
   const [rooms, setRooms] = useState([])
 
   useEffect(() => {
@@ -102,7 +102,7 @@ function RoomSelector(props: RoomSelectorProps) {
 }
 
 export default function SignIn() {
-  const ctx = useContext(SocketContext)
+  const ctx = useContext(StoreContext)
   const [roomId, setRoomId] = useState('')
   const [isNew, setIsNew] = useState(false)
   const router = useRouter()

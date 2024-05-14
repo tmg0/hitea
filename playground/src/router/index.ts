@@ -1,5 +1,5 @@
-import Room from '../components/Room'
-import SignIn from '../components/SignIn'
+import Room from '../pages/Room'
+import SignIn from '../pages/SignIn'
 import type { Route } from '../hooks/useRouter'
 
 export const routes: Route[] = [

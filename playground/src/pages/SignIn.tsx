@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { Box, Text } from 'ink'
-import { Alert, Select, TextInput } from '@inkjs/ui'
+import { Select, TextInput } from '@inkjs/ui'
 import useRouter from '../hooks/useRouter'
-import { StoreContext } from './StoreProvider'
+import { StoreContext } from '../components/StoreProvider'
 
 function NameInput() {
   const ctx = useContext(StoreContext)
@@ -34,9 +34,9 @@ function RoomNameInput(props: RoomNameInputProps) {
 
   return (
     <Box flexDirection="row" gap={1}>
-      <Text>Name: </Text>
+      <Text>Room: </Text>
       <TextInput
-        placeholder="Enter the room name..."
+        placeholder="Enter the room..."
         onSubmit={handleSubmit}
       />
     </Box>
@@ -97,7 +97,6 @@ export default function SignIn() {
   return (
     <Box flexDirection="column" gap={1}>
       {!ctx.name ? <NameInput /> : undefined}
-      {ctx.name ? <Alert variant="info">{ctx.name}</Alert> : undefined}
       {ctx.isConnected && ctx.name && !isNew ? <RoomSelector onSelect={setRoomId} setIsNew={setIsNew} /> : undefined}
       {ctx.isConnected && isNew ? <RoomNameInput onSubmit={setRoomId} /> : undefined}
     </Box>

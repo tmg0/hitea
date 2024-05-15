@@ -22,8 +22,8 @@ function RoomActionSelector() {
   }
 
   function onStart() {
-    const players = ctx.room.players ?? []
-    if (players < 2)
+    const players = ctx.room.game.players ?? []
+    if (players.length < 2)
       return
     router.push('/game')
   }

@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react'
+import { useContext } from 'react'
 import { RouterContext } from '../components/RouterProvider'
 
 const isString = (value: any): value is string => typeof value === 'string'

@@ -25,7 +25,7 @@ interface RoomInputProps {
 function RoomInput(props: RoomInputProps) {
   const ctx = useContext(StoreContext)
 
-  function handleSubmit(name: string) {
+  function onSubmit(name: string) {
     ctx.client?.emit('room:create', { name })
     ctx.client?.on('room:get', ({ data }: any) => {
       props.onSubmit(data.id)
@@ -37,7 +37,7 @@ function RoomInput(props: RoomInputProps) {
       <Text>Room: </Text>
       <TextInput
         placeholder="Enter the room..."
-        onSubmit={handleSubmit}
+        onSubmit={onSubmit}
       />
     </Box>
   )
@@ -59,7 +59,7 @@ function RoomSelector(props: RoomSelectorProps) {
     ctx.client?.emit('room:list')
   }, [])
 
-  function handleChange(id: string) {
+  function onChange(id: string) {
     props.setIsNew(id === 'new')
     props.onSelect(id === 'new' ? '' : id)
   }
@@ -77,7 +77,7 @@ function RoomSelector(props: RoomSelectorProps) {
             label,
           })),
         ]}
-        onChange={handleChange}
+        onChange={onChange}
       />
     </>
   )

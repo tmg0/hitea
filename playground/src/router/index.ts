@@ -1,6 +1,7 @@
+import type { Route } from '../hooks/useRouter'
 import Room from '../pages/Room'
 import SignIn from '../pages/SignIn'
-import type { Route } from '../hooks/useRouter'
+import Game from '../pages/Game'
 
 export const routes: Route[] = [
   {
@@ -10,5 +11,9 @@ export const routes: Route[] = [
   {
     path: '/room',
     component: Room,
+  },
+  {
+    path: '/game',
+    component: Game,
   },
 ]

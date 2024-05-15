@@ -21,7 +21,7 @@ class Response {
   ) {}
 }
 
-function leaveTheRoom(socket: Socket, player: Player, room?: Room) {
+function onLeave(socket: Socket, player: Player, room?: Room) {
   if (!room)
     return
   room.game.leave(player)
@@ -45,7 +45,7 @@ io.on('connection', async (socket) => {
   await storage.setItem(key, player.data)
 
   socket.on('disconnect', () => {
-    leaveTheRoom(socket, player, room)
+    onLeave(socket, player, room)
   })
 
   socket.on('room:list', () => {
@@ -68,7 +68,7 @@ io.on('connection', async (socket) => {
 
   socket.on('game:join', (data: { roomId: string }) => {
     if (room)
-      leaveTheRoom(socket, player, room)
+      onLeave(socket, player, room)
     room = rooms.find(({ id }) => id === data.roomId)
     if (!room)
       return
@@ -78,7 +78,8 @@ io.on('connection', async (socket) => {
   })
 
   socket.on('room:leave', () => {
-    leaveTheRoom(socket, player, room)
+    onLeave(socket, player, room)
+    room = undefined
   })
 
   socket.on('message:send', (data: any) => {

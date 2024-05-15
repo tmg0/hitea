@@ -1,5 +1,5 @@
-import React, { useContext, useState } from 'react'
-import { Box, Text } from 'ink'
+import React, { useContext } from 'react'
+import { Box, Text, useInput } from 'ink'
 import { Select, TextInput } from '@inkjs/ui'
 import useRouter from '../hooks/useRouter'
 import { StoreContext } from '../components/StoreProvider'
@@ -9,6 +9,11 @@ function RoomActionSelector() {
   const router = useRouter()
   const ctx = useContext(StoreContext)
 
+  useInput((_, key) => {
+    if (key.return)
+      console.log(ctx.room)
+  })
+
   function onChange(value: string) {
     if (value === 'Start')
       onStart()
@@ -17,6 +22,9 @@ function RoomActionSelector() {
   }
 
   function onStart() {
+    const players = ctx.room.players ?? []
+    if (players < 2)
+      return
     router.push('/game')
   }
 

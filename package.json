@@ -21,14 +21,19 @@
   ],
   "main": "index.js",
   "scripts": {
-    "test": "vitest"
+    "test": "vitest",
+    "lint": "unox",
+    "lint:fix": "unox --fix"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^2.17.0",
     "@types/node": "^20.12.11",
     "eslint": "^9.2.0",
+    "eslint-plugin-oxlint": "^0.2.9",
+    "oxlint": "^0.3.5",
     "tsup": "^8.0.2",
     "typescript": "^5.4.5",
+    "unplugin-oxlint": "^0.6.0",
     "vitest": "^1.6.0"
   }
 }

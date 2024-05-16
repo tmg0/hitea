@@ -92,7 +92,9 @@ export class TexasHoldem extends Game {
   nextRound() {
     this.round++
     this._player = this._dealer
-    this.players.forEach((player) => { player.resetBet() })
+    this.players.forEach((player) => {
+      player.resetBet()
+    })
 
     if (this.round === 1)
       this.onFlop()

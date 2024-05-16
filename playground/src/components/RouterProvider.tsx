@@ -1,5 +1,5 @@
 import type { PropsWithChildren } from 'react'
-import React, { createContext, useEffect, useMemo, useState } from 'react'
+import React, { createContext, useMemo, useState } from 'react'
 import type { Route } from '../hooks/useRouter'
 
 interface Context {

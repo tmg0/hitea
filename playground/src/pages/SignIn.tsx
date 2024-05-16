@@ -68,7 +68,7 @@ function RoomSelector(props: RoomSelectorProps) {
     <>
       <Select
         options={[
-				  {
+          {
             label: 'New',
             value: 'new',
           },

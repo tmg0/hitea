@@ -8,6 +8,7 @@ export type GameStatus = 'pending' | 'pre-flop' | 'flop' | 'turn' | 'river' | 's
 export type Event = 'call' | 'raise' | 'fold' | 'check' | 'all-in'
 
 export class Game {
+  start(..._: any) {}
   join(..._: any) {}
   leave(..._: any) {}
   get isEmpty(): boolean { return true }

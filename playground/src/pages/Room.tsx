@@ -46,7 +46,6 @@ function ChatInput() {
       return
     ctx.client?.emit('message:send', ctx.input)
     ctx.setInput?.('')
-    ctx.clearChat?.()
   }
 
   return (

@@ -55,7 +55,7 @@ export default function StoreProvider(props: PropsWithChildren) {
     })
 
     client?.on('message:get', ({ data }: any) => {
-      setMessages([...messages, data])
+      setMessages(prev => [...prev, data])
     })
   }, [client])
 

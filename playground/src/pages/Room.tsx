@@ -4,6 +4,7 @@ import TextInput from 'ink-text-input'
 import { Select } from '@inkjs/ui'
 import useRouter from '../hooks/useRouter'
 import { StoreContext } from '../components/StoreProvider'
+import { Conversation } from '../components/Conversation'
 
 function RoomActionSelector() {
   const actions = ['Start', 'Exit']
@@ -61,9 +62,7 @@ export default function Room() {
 
   return (
     <Box flexDirection="column" gap={1}>
-      <Box flexDirection="column">
-        {ctx.messages.map(({ from, content }, i) => <Text key={i}>{`${from}: ${content}`}</Text>)}
-      </Box>
+      {ctx.messages.length ? <Conversation /> : undefined}
       <RoomActionSelector />
       <ChatInput />
     </Box>

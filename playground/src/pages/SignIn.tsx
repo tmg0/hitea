@@ -1,18 +1,22 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { Box, Text } from 'ink'
-import { Select, TextInput } from '@inkjs/ui'
+import TextInput from 'ink-text-input'
+import { Select } from '@inkjs/ui'
 import useRouter from '../hooks/useRouter'
 import { StoreContext } from '../components/StoreProvider'
 
 function NameInput() {
+  const [value, setValue] = useState('')
   const ctx = useContext(StoreContext)
 
   return (
     <Box flexDirection="row" gap={1}>
       <Text>Name: </Text>
       <TextInput
+        value={value}
         placeholder="Enter your name..."
-        onSubmit={ctx.setName}
+        onChange={setValue}
+        onSubmit={ctx.setName!}
       />
     </Box>
   )
@@ -23,6 +27,7 @@ interface RoomInputProps {
 }
 
 function RoomInput(props: RoomInputProps) {
+  const [value, setValue] = useState('')
   const ctx = useContext(StoreContext)
 
   function onSubmit(name: string) {
@@ -36,7 +41,9 @@ function RoomInput(props: RoomInputProps) {
     <Box flexDirection="row" gap={1}>
       <Text>Room: </Text>
       <TextInput
+        value={value}
         placeholder="Enter the room..."
+        onChange={setValue}
         onSubmit={onSubmit}
       />
     </Box>
@@ -61,7 +68,10 @@ function RoomSelector(props: RoomSelectorProps) {
 
   function onChange(id: string) {
     props.setIsNew(id === 'new')
-    props.onSelect(id === 'new' ? '' : id)
+    ctx.client?.emit('game:join', { roomId: id })
+    ctx.client?.on('room:get', () => {
+      props.onSelect(id === 'new' ? '' : id)
+    })
   }
 
   return (

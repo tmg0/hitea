@@ -7,15 +7,21 @@ import mri from 'mri'
 
 interface Context {
   name: string
+  input: string
   room: any
+  messages: any[]
   client?: Socket
   isConnected: boolean
   setName?: (value: string) => void
+  setInput?: (value: string) => void
+  clearChat?: () => void
 }
 
 const defaults = {
   name: '',
+  input: '',
   room: {},
+  messages: [],
   client: undefined,
   isConnected: false,
 }
@@ -30,6 +36,8 @@ export default function StoreProvider(props: PropsWithChildren) {
   const [client, setClient] = useState<Socket | undefined>(undefined)
   const [isConnected, setIsConnected] = useState(false)
   const [room, setRoom] = useState<any>({})
+  const [messages, setMessages] = useState<any[]>([])
+  const [input, setInput] = useState('')
 
   useEffect(() => {
     if (!name)
@@ -45,15 +53,27 @@ export default function StoreProvider(props: PropsWithChildren) {
     client?.on('room:get', ({ data }: any) => {
       setRoom(data)
     })
+
+    client?.on('message:get', ({ data }: any) => {
+      setMessages([...messages, data])
+    })
   }, [client])
+
+  function clearChat() {
+    setMessages([])
+  }
 
   const value = useMemo(() => ({
     name,
+    input,
     room,
+    messages,
     client,
     isConnected,
     setName,
-  }), [name, room, isConnected])
+    setInput,
+    clearChat,
+  }), [name, room, messages, input, isConnected])
 
   return (
     <StoreContext.Provider value={{ ...value }}>

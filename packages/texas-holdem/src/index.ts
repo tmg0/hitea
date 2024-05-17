@@ -82,10 +82,10 @@ io.on('connection', async (socket) => {
     room = undefined
   })
 
-  socket.on('message:send', (data: any) => {
+  socket.on('message:send', (content: string) => {
     if (!room)
       return
-    io.to(room.id).emit('message:get', new Response(data))
+    io.to(room.id).emit('message:get', new Response({ from: player.name, content }))
   })
 })
 

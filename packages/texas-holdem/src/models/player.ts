@@ -9,7 +9,7 @@ export class Player {
   public name: string = ''
   public chips: number = 10000
   public holeCards: Card[] = []
-  public bet: number | undefined = 0
+  public bet: number | undefined = undefined
   public status: PlayerStatus = 'active'
 
   private _game!: TexasHoldem
@@ -26,7 +26,7 @@ export class Player {
   }
 
   resetBet() {
-    this.bet = 0
+    this.bet = undefined
   }
 
   join(game: TexasHoldem) {

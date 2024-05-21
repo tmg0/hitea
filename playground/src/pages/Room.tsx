@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useMemo } from 'react'
 import { Box, Text } from 'ink'
 import TextInput from 'ink-text-input'
 import { Select } from '@inkjs/ui'
@@ -9,7 +9,12 @@ import { Conversation } from '../components/Conversation'
 function RoomActionSelector() {
   const router = useRouter()
   const ctx = useContext(StoreContext)
-  const actions = [ctx.isRoomOwner ? 'Start' : undefined, 'Exit'].filter(Boolean) as string[]
+
+  const actions = useMemo(() => {
+    if (ctx.isRoomOwner)
+      return ['Start', 'Exit']
+    return ['Exit']
+  }, [ctx.isRoomOwner])
 
   function onChange(value: string) {
     if (value === 'Start')

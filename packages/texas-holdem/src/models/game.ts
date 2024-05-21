@@ -1,4 +1,4 @@
-import { isString } from '../utils'
+import { isNumber, isString } from '../utils'
 import type { Card } from './card'
 import { Deck } from './deck'
 import type { Player } from './player'
@@ -40,7 +40,8 @@ export class TexasHoldem extends Game {
     const _idx = this.players.findIndex(({ id }) => id === _id)
     if (_idx < 0)
       return
-    this.players[_idx].fold()
+    if (this.status !== 'pending')
+      this.players[_idx].fold()
     this.players.splice(_idx, 1)
   }
 
@@ -114,6 +115,8 @@ export class TexasHoldem extends Game {
       this.onRiver()
     if (this.round === 4)
       this.onShowdown()
+
+    console.log('Next round:', this.status)
   }
 
   onFlop() {
@@ -123,6 +126,8 @@ export class TexasHoldem extends Game {
       this.deal(),
       this.deal(),
     ]
+
+    console.log('Flop:', this.communityCards)
   }
 
   onTurn() {
@@ -131,6 +136,8 @@ export class TexasHoldem extends Game {
       ...this.communityCards,
       this.deal(),
     ]
+
+    console.log('Turn:', this.communityCards)
   }
 
   onRiver() {
@@ -139,6 +146,8 @@ export class TexasHoldem extends Game {
       ...this.communityCards,
       this.deal(),
     ]
+
+    console.log('River:', this.communityCards)
   }
 
   onShowdown() {
@@ -171,7 +180,11 @@ export class TexasHoldem extends Game {
   }
 
   get isEven() {
-    return this.players.every(({ bet, status }) => status === 'all-in' || bet === this.bet)
+    return this.players.every(({ bet, status }) => {
+      if (!isNumber(bet))
+        return false
+      return status === 'all-in' || bet === this.bet
+    })
   }
 
   get unfoldedPlayers() {

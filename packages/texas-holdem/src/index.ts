@@ -26,7 +26,6 @@ function onExit(socket: Socket, player: Player, room?: Room) {
     return
   room.game.exit(player)
   socket.leave(room.id)
-  io.to(room.id).emit('room:get', new Response(room.data))
   if (!room.game.isEmpty)
     return
   const _id = room.id
@@ -83,9 +82,10 @@ io.on('connection', async (socket) => {
   })
 
   socket.on('game:start', () => {
+    console.log('on game start')
     if (!room)
       return
-    room.game.start()
+    // room.game.start()
     io.to(room.id).emit('game:start')
     io.to(room.id).emit('room:get', new Response(room.data))
   })

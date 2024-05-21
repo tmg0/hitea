@@ -21,10 +21,10 @@ class Response {
   ) {}
 }
 
-function onLeave(socket: Socket, player: Player, room?: Room) {
+function onExit(socket: Socket, player: Player, room?: Room) {
   if (!room)
     return
-  room.game.leave(player)
+  room.game.exit(player)
   socket.leave(room.id)
   io.to(room.id).emit('room:get', new Response(room.data))
   if (!room.game.isEmpty)
@@ -45,7 +45,7 @@ io.on('connection', async (socket) => {
   await storage.setItem(key, player.data)
 
   socket.on('disconnect', () => {
-    onLeave(socket, player, room)
+    onExit(socket, player, room)
   })
 
   socket.on('room:list', () => {
@@ -68,7 +68,7 @@ io.on('connection', async (socket) => {
 
   socket.on('game:join', (data: { roomId: string }) => {
     if (room)
-      onLeave(socket, player, room)
+      onExit(socket, player, room)
     room = rooms.find(({ id }) => id === data.roomId)
     if (!room)
       return
@@ -77,8 +77,8 @@ io.on('connection', async (socket) => {
     io.to(room.id).emit('room:get', new Response(room.data))
   })
 
-  socket.on('room:leave', () => {
-    onLeave(socket, player, room)
+  socket.on('room:exit', () => {
+    onExit(socket, player, room)
     room = undefined
   })
 

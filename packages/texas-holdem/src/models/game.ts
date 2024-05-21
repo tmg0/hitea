@@ -10,7 +10,7 @@ export type Event = 'call' | 'raise' | 'fold' | 'check' | 'all-in'
 export class Game {
   start(..._: any) {}
   join(..._: any) {}
-  leave(..._: any) {}
+  exit(..._: any) {}
   get isEmpty(): boolean { return true }
   get data(): any { return this }
 }
@@ -35,7 +35,7 @@ export class TexasHoldem extends Game {
     this.players.push(player)
   }
 
-  leave(player: Player | string) {
+  exit(player: Player | string) {
     const _id = isString(player) ? player : player.id
     const _idx = this.players.findIndex(({ id }) => id === _id)
     if (_idx < 0)

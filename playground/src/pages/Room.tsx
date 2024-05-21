@@ -26,7 +26,7 @@ function RoomActionSelector() {
   }
 
   function onExit() {
-    ctx.client?.emit('room:leave')
+    ctx.client?.emit('room:exit')
     router.push('/sign-in')
   }
 

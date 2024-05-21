@@ -7,9 +7,9 @@ import { StoreContext } from '../components/StoreProvider'
 import { Conversation } from '../components/Conversation'
 
 function RoomActionSelector() {
-  const actions = ['Start', 'Exit']
   const router = useRouter()
   const ctx = useContext(StoreContext)
+  const actions = [ctx.isRoomOwner ? 'Start' : undefined, 'Exit'].filter(Boolean) as string[]
 
   function onChange(value: string) {
     if (value === 'Start')
@@ -22,7 +22,7 @@ function RoomActionSelector() {
     const players = ctx.room.game.players ?? []
     if (players.length < 2)
       return
-    router.push('/game')
+    ctx.client?.emit('game:start')
   }
 
   function onExit() {
@@ -62,6 +62,7 @@ export default function Room() {
 
   return (
     <Box flexDirection="column" gap={1}>
+      <Text>{JSON.stringify(ctx.room)}</Text>
       {ctx.messages.length ? <Conversation /> : undefined}
       <RoomActionSelector />
       <ChatInput />

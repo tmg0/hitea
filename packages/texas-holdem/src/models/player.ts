@@ -1,5 +1,4 @@
 import { nanoid } from 'nanoid'
-import { Exception } from '../consts'
 import type { Card } from './card'
 import type { TexasHoldem } from './game'
 
@@ -10,7 +9,7 @@ export class Player {
   public name: string = ''
   public chips: number = 10000
   public holeCards: Card[] = []
-  public bet: number = 0
+  public bet: number | undefined = 0
   public status: PlayerStatus = 'active'
 
   private _game!: TexasHoldem
@@ -35,16 +34,16 @@ export class Player {
   }
 
   call() {
-    const _diff = this._game.bet - this.bet
+    const _diff = this._game.bet - (this.bet ?? 0)
     this.bet = this._game.bet
     this.chips -= _diff
   }
 
-  check() {}
+  check() {
+    this.bet = undefined
+  }
 
   raise(to: number) {
-    if (to < this._game.bet)
-      throw new Error(Exception.UNEXPECTED_BETS)
     this._game.bet = to
     this.bet = to
     this.chips -= to

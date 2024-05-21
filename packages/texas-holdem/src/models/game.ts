@@ -74,25 +74,34 @@ export class TexasHoldem extends Game {
   }
 
   nextPlayer() {
-    if (this.unfoldedPlayers.length === 1)
+    if (this.unfoldedPlayers.length === 1) {
       this.unfoldedPlayers[0].scoop()
+      return
+    }
 
-    if (this.players.every(({ bet, status }) => status === 'all-in' || bet === this.bet))
-      this.nextRound()
-
-    if (this.status === 'showdown')
-
-      this._player++
+    this._player = this._player + 1
     if (this._player >= this.players.length)
       this._player = 0
 
-    if (this.player.status === 'all-in')
+    const isPreFlop = this.round === 0
+
+    if (isPreFlop && this.isEven) {
+      this.nextPlayer()
+      return
+    }
+
+    if (this.isEven) {
+      this.nextRound()
+      return
+    }
+
+    if (['all-in', 'folded'].includes(this.player.status))
       this.nextPlayer()
   }
 
   nextRound() {
-    this.round++
-    this._player = this._dealer
+    this.round = this.round + 1
+    this.bet = 0
     this.players.forEach((player) => {
       player.resetBet()
     })
@@ -159,6 +168,10 @@ export class TexasHoldem extends Game {
 
   get isEmpty() {
     return this.players.length < 1
+  }
+
+  get isEven() {
+    return this.players.every(({ bet, status }) => status === 'all-in' || bet === this.bet)
   }
 
   get unfoldedPlayers() {

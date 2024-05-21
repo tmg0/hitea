@@ -82,6 +82,14 @@ io.on('connection', async (socket) => {
     room = undefined
   })
 
+  socket.on('game:start', () => {
+    if (!room)
+      return
+    room.game.start()
+    io.to(room.id).emit('game:start')
+    io.to(room.id).emit('room:get', new Response(room.data))
+  })
+
   socket.on('message:send', (content: string) => {
     if (!room)
       return

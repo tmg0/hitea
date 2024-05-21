@@ -4,6 +4,7 @@ import React, { createContext, useEffect, useMemo, useState } from 'react'
 import type { Socket } from 'socket.io-client'
 import ioc from 'socket.io-client'
 import mri from 'mri'
+import useRouter from '../hooks/useRouter'
 
 interface Context {
   name: string
@@ -32,6 +33,7 @@ const { h: host, p: port, n: _name } = mri(argv)
 export const StoreContext = createContext<Context>(defaults)
 
 export default function StoreProvider(props: PropsWithChildren) {
+  const router = useRouter()
   const [name, setName] = useState(_name)
   const [client, setClient] = useState<Socket | undefined>(undefined)
   const [isConnected, setIsConnected] = useState(false)
@@ -46,16 +48,24 @@ export default function StoreProvider(props: PropsWithChildren) {
   }, [name])
 
   useEffect(() => {
-    client?.on('connect', () => {
+    if (!client)
+      return
+
+    client.on('connect', () => {
       setIsConnected(true)
     })
 
-    client?.on('room:get', ({ data }: any) => {
+    client.on('room:get', ({ data }: any) => {
+      console.log(data)
       setRoom(data)
     })
 
-    client?.on('message:get', ({ data }: any) => {
+    client.on('message:get', ({ data }: any) => {
       setMessages(prev => [...prev, data])
+    })
+
+    client.on('game:start', () => {
+      router.push('/game')
     })
   }, [client])
 

@@ -71,7 +71,7 @@ export default function StoreProvider(props: PropsWithChildren) {
     })
 
     client.on('message:get', ({ data }: any) => {
-      setMessages(prev => [...prev, data])
+      setMessages(prev => [...prev, data].slice(-10))
     })
 
     client.on('game:start', () => {

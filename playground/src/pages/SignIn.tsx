@@ -1,9 +1,9 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Box, Text } from 'ink'
 import TextInput from 'ink-text-input'
-import { Select } from '@inkjs/ui'
 import useRouter from '../hooks/useRouter'
 import { StoreContext } from '../components/StoreProvider'
+import RoomSelector from '../components/Room/RoomSelector'
 
 function NameInput() {
   const [value, setValue] = useState('')
@@ -47,43 +47,6 @@ function RoomInput(props: RoomInputProps) {
         onSubmit={onSubmit}
       />
     </Box>
-  )
-}
-
-interface RoomSelectorProps {
-  onSelect: (id: string) => void
-  setIsNew: (value: boolean) => void
-}
-
-function RoomSelector(props: RoomSelectorProps) {
-  const ctx = useContext(StoreContext)
-
-  useEffect(() => {
-    ctx.client?.emit('room:list')
-  }, [])
-
-  function onChange(id: string) {
-    props.setIsNew(id === 'new')
-    ctx.client?.emit('game:join', { roomId: id })
-    ctx.client?.on('room:get', () => {
-      props.onSelect(id === 'new' ? '' : id)
-    })
-  }
-
-  return (
-    <Select
-      options={[
-        {
-          label: 'New',
-          value: 'new',
-        },
-        ...ctx.rooms.map(({ id: value, name: label }) => ({
-          value,
-          label,
-        })),
-      ]}
-      onChange={onChange}
-    />
   )
 }
 

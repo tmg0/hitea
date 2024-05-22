@@ -5,6 +5,8 @@ import { Select } from '@inkjs/ui'
 import useRouter from '../hooks/useRouter'
 import { StoreContext } from '../components/StoreProvider'
 import { Conversation } from '../components/Conversation'
+import RoomBanner from '../components/Room/RoomBanner'
+import Divider from '../components/Divider'
 
 function RoomActionSelector() {
   const router = useRouter()
@@ -75,6 +77,8 @@ export default function Room() {
 
   return (
     <Box flexDirection="column" gap={1}>
+      <RoomBanner />
+      <Divider />
       {ctx.messages.length ? <Conversation /> : undefined}
       <RoomActionSelector />
       <ChatInput />

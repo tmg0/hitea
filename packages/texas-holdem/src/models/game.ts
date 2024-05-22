@@ -1,4 +1,4 @@
-import { isNumber, isString } from '../utils'
+import { isString } from '../utils'
 import type { Card } from './card'
 import { Deck } from './deck'
 import type { Player } from './player'
@@ -181,7 +181,7 @@ export class TexasHoldem extends Game {
 
   get isEven() {
     return this.players.every(({ bet, status }) => {
-      if (!isNumber(bet))
+      if (bet === undefined)
         return false
       return status === 'all-in' || bet === this.bet
     })

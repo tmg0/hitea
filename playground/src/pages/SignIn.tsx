@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { Box, Text } from 'ink'
 import TextInput from 'ink-text-input'
 import { Select } from '@inkjs/ui'
@@ -57,12 +57,8 @@ interface RoomSelectorProps {
 
 function RoomSelector(props: RoomSelectorProps) {
   const ctx = useContext(StoreContext)
-  const [rooms, setRooms] = useState([])
 
   useEffect(() => {
-    ctx.client?.on('room:list', ({ data }: any) => {
-      setRooms(data ?? [])
-    })
     ctx.client?.emit('room:list')
   }, [])
 
@@ -75,21 +71,19 @@ function RoomSelector(props: RoomSelectorProps) {
   }
 
   return (
-    <>
-      <Select
-        options={[
-          {
-            label: 'New',
-            value: 'new',
-          },
-          ...rooms.map(({ id: value, name: label }) => ({
-            value,
-            label,
-          })),
-        ]}
-        onChange={onChange}
-      />
-    </>
+    <Select
+      options={[
+        {
+          label: 'New',
+          value: 'new',
+        },
+        ...ctx.rooms.map(({ id: value, name: label }) => ({
+          value,
+          label,
+        })),
+      ]}
+      onChange={onChange}
+    />
   )
 }
 

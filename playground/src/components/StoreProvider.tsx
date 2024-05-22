@@ -6,23 +6,29 @@ import ioc from 'socket.io-client'
 import mri from 'mri'
 import useRouter from '../hooks/useRouter'
 
+interface Room {
+  id: string
+  name: string
+}
+
 interface Context {
   name: string
   input: string
   room: any
+  rooms: Room[]
   messages: any[]
   client?: Socket
   isConnected: boolean
   isRoomOwner: boolean
   setName?: (value: string) => void
   setInput?: (value: string) => void
-  clearChat?: () => void
 }
 
 const defaults = {
   name: '',
   input: '',
   room: {},
+  rooms: [],
   messages: [],
   client: undefined,
   isConnected: false,
@@ -36,10 +42,11 @@ export const StoreContext = createContext<Context>(defaults)
 
 export default function StoreProvider(props: PropsWithChildren) {
   const router = useRouter()
-  const [name, setName] = useState(_name)
+  const [name, setName] = useState<string>(_name)
   const [client, setClient] = useState<Socket | undefined>(undefined)
   const [isConnected, setIsConnected] = useState(false)
   const [room, setRoom] = useState<any>({})
+  const [rooms, setRooms] = useState<Room[]>([])
   const [messages, setMessages] = useState<any[]>([])
   const [input, setInput] = useState('')
   const isRoomOwner = useMemo(() => { return name === room?.game?.players?.[0].name }, [room])
@@ -47,12 +54,9 @@ export default function StoreProvider(props: PropsWithChildren) {
   useEffect(() => {
     if (!name)
       return
-    setClient(ioc(`http://${host}:${port}`, { query: { name } }))
-  }, [name])
 
-  useEffect(() => {
-    if (!client)
-      return
+    const client = ioc(`http://${host}:${port}`, { query: { name: name.trim() } })
+    setClient(client)
 
     client.on('connect', () => {
       setIsConnected(true)
@@ -62,6 +66,10 @@ export default function StoreProvider(props: PropsWithChildren) {
       setRoom(data)
     })
 
+    client.on('room:list', ({ data }: any) => {
+      setRooms(data ?? [])
+    })
+
     client.on('message:get', ({ data }: any) => {
       setMessages(prev => [...prev, data])
     })
@@ -69,24 +77,20 @@ export default function StoreProvider(props: PropsWithChildren) {
     client.on('game:start', () => {
       router.push('/game')
     })
-  }, [client])
-
-  function clearChat() {
-    setMessages([])
-  }
+  }, [name])
 
   const value = useMemo(() => ({
     name,
     input,
     room,
+    rooms,
     messages,
     client,
     isConnected,
     isRoomOwner,
     setName,
     setInput,
-    clearChat,
-  }), [name, room, messages, input, isConnected])
+  }), [name, room, rooms, messages, input, isConnected, isRoomOwner])
 
   return (
     <StoreContext.Provider value={{ ...value }}>

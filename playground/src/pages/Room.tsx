@@ -10,11 +10,19 @@ function RoomActionSelector() {
   const router = useRouter()
   const ctx = useContext(StoreContext)
 
+  const isDisabled = useMemo(() => {
+    return !!ctx.input
+  }, [ctx.input])
+
   const actions = useMemo(() => {
     if (ctx.isRoomOwner)
       return ['Start', 'Exit']
     return ['Exit']
   }, [ctx.isRoomOwner])
+
+  const options = useMemo(() => {
+    return actions.map(a => ({ value: a, label: a }))
+  }, [actions])
 
   function onChange(value: string) {
     if (value === 'Start')
@@ -37,8 +45,8 @@ function RoomActionSelector() {
 
   return (
     <Select
-      isDisabled={!!ctx.input}
-      options={actions.map(a => ({ value: a, label: a }))}
+      isDisabled={isDisabled}
+      options={options}
       onChange={onChange}
     />
   )
@@ -67,7 +75,6 @@ export default function Room() {
 
   return (
     <Box flexDirection="column" gap={1}>
-      <Text>{JSON.stringify(ctx.room)}</Text>
       {ctx.messages.length ? <Conversation /> : undefined}
       <RoomActionSelector />
       <ChatInput />

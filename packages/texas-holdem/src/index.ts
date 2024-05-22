@@ -21,6 +21,10 @@ class Response {
   ) {}
 }
 
+function emitRooms() {
+  io.emit('room:list', new Response(rooms.map(({ data }) => data)))
+}
+
 function onExit(socket: Socket, player: Player, room?: Room) {
   if (!room)
     return
@@ -33,6 +37,7 @@ function onExit(socket: Socket, player: Player, room?: Room) {
   if (_idx < 0)
     return
   rooms.splice(_idx, 1)
+  emitRooms()
 }
 
 io.on('connection', async (socket) => {
@@ -48,7 +53,7 @@ io.on('connection', async (socket) => {
   })
 
   socket.on('room:list', () => {
-    socket.emit('room:list', new Response(rooms.map(({ data }) => data)))
+    emitRooms()
   })
 
   socket.on('player:get', () => {
@@ -63,6 +68,7 @@ io.on('connection', async (socket) => {
     room.game.join(player)
     socket.join(room.id)
     io.to(room.id).emit('room:get', new Response(room.data))
+    emitRooms()
   })
 
   socket.on('game:join', (data: { roomId: string }) => {
@@ -82,12 +88,10 @@ io.on('connection', async (socket) => {
   })
 
   socket.on('game:start', () => {
-    console.log('on game start')
     if (!room)
       return
-    // room.game.start()
+    room.game.start()
     io.to(room.id).emit('game:start')
-    io.to(room.id).emit('room:get', new Response(room.data))
   })
 
   socket.on('message:send', (content: string) => {

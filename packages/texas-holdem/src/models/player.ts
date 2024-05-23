@@ -11,6 +11,8 @@ export class Player {
   public holeCards: Card[] = []
   public bet: number | undefined = undefined
   public status: PlayerStatus = 'active'
+  public isBB = false
+  public isSB = false
 
   private _game!: TexasHoldem
 
@@ -36,17 +38,23 @@ export class Player {
   call() {
     const _diff = this._game.bet - (this.bet ?? 0)
     this.bet = this._game.bet
-    this.chips -= _diff
+    this.chips = this.chips = _diff
+    this._game.pot = this._game.pot + _diff
+    this._game.nextPlayer()
   }
 
   check() {
     this.bet = undefined
   }
 
-  raise(to: number) {
-    this._game.bet = to
-    this.bet = to
-    this.chips -= to
+  raise(value: number) {
+    if (this._game.bet > value)
+      return
+    this._game.bet = value
+    this.bet = (this.bet ?? 0) + value
+    this.chips = this.chips - value
+    this._game.pot = this._game.pot + value
+    this._game.nextPlayer()
   }
 
   fold() {

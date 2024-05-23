@@ -3,8 +3,7 @@ import type { Card } from './card'
 import { Deck } from './deck'
 import type { Player } from './player'
 
-export type GameStatus = 'pending' | 'pre-flop' | 'flop' | 'turn' | 'river' | 'showdown'
-
+export type Round = undefined | 'pre-flop' | 'flop' | 'turn' | 'river' | 'showdown'
 export type Event = 'call' | 'raise' | 'fold' | 'check' | 'all-in'
 
 export class Game {
@@ -17,14 +16,14 @@ export class Game {
 
 export class TexasHoldem extends Game {
   public players: Player[] = []
-  public round: number = 0
+  public round: Round = undefined
   public decks: Deck[] = []
   public communityCards: Card[] = []
-  public status: GameStatus = 'pending'
   public maxPlayers: number = 10
   public pot: number = 0
   public bet: number = 0
 
+  private _turn = 0
   private _player = 0
   private _dealer = 0
 
@@ -40,7 +39,7 @@ export class TexasHoldem extends Game {
     const _idx = this.players.findIndex(({ id }) => id === _id)
     if (_idx < 0)
       return
-    if (this.status !== 'pending')
+    if (this.round !== undefined)
       this.players[_idx].fold()
     this.players.splice(_idx, 1)
   }
@@ -51,6 +50,12 @@ export class TexasHoldem extends Game {
 
     this.decks = [new Deck()]
     this.shuffle()
+
+    this.players.forEach((player) => {
+      player.isBB = false
+      player.isSB = false
+    })
+
     this.players.forEach((player) => {
       player.holeCards = [
         this.deal(),
@@ -58,14 +63,14 @@ export class TexasHoldem extends Game {
       ]
     })
 
-    this.round = 0
-    this.status = 'pre-flop'
+    this._turn = 0
     this._player = this._dealer
+    this.round = 'pre-flop'
     this.nextPlayer()
+    this.player.isSB = true
     this.player.raise(10)
-    this.nextPlayer()
+    this.player.isBB = true
     this.player.raise(20)
-    this.nextPlayer()
   }
 
   finish() {
@@ -74,22 +79,26 @@ export class TexasHoldem extends Game {
       this._dealer = 0
   }
 
+  nextIndex() {
+    this._player = this._player + 1
+    if (this._player >= this.players.length)
+      this._player = 0
+  }
+
   nextPlayer() {
     if (this.unfoldedPlayers.length === 1) {
       this.unfoldedPlayers[0].scoop()
       return
     }
 
-    this._player = this._player + 1
-    if (this._player >= this.players.length)
-      this._player = 0
+    const isPreFlop = this.round === 'pre-flop'
 
-    const isPreFlop = this.round === 0
-
-    if (isPreFlop && this.isEven) {
-      this.nextPlayer()
+    if (isPreFlop && this.player.isSB && this.isEven) {
+      this.nextIndex()
       return
     }
+
+    this.nextIndex()
 
     if (this.isEven) {
       this.nextRound()
@@ -101,26 +110,27 @@ export class TexasHoldem extends Game {
   }
 
   nextRound() {
-    this.round = this.round + 1
+    this._player = this._dealer
+    this._turn = this._turn + 1
     this.bet = 0
     this.players.forEach((player) => {
       player.resetBet()
     })
 
-    if (this.round === 1)
+    if (this._turn === 1)
       this.onFlop()
-    if (this.round === 2)
+    if (this._turn === 2)
       this.onTurn()
-    if (this.round === 3)
+    if (this._turn === 3)
       this.onRiver()
-    if (this.round === 4)
+    if (this._turn === 4)
       this.onShowdown()
 
-    console.log('Next round:', this.status)
+    console.log('Next round:', this.round)
   }
 
   onFlop() {
-    this.status = 'flop'
+    this.round = 'flop'
     this.communityCards = [
       this.deal(),
       this.deal(),
@@ -131,7 +141,7 @@ export class TexasHoldem extends Game {
   }
 
   onTurn() {
-    this.status = 'turn'
+    this.round = 'turn'
     this.communityCards = [
       ...this.communityCards,
       this.deal(),
@@ -141,7 +151,7 @@ export class TexasHoldem extends Game {
   }
 
   onRiver() {
-    this.status = 'river'
+    this.round = 'river'
     this.communityCards = [
       ...this.communityCards,
       this.deal(),
@@ -151,7 +161,7 @@ export class TexasHoldem extends Game {
   }
 
   onShowdown() {
-    this.status = 'showdown'
+    this.round = 'showdown'
   }
 
   shuffle() {
@@ -207,7 +217,6 @@ export class TexasHoldem extends Game {
       round: this.round,
       decks: [],
       communityCards: this.communityCards,
-      status: this.status,
       maxPlayers: this.maxPlayers,
       pot: this.pot,
       bet: this.bet,

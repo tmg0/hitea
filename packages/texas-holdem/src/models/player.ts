@@ -23,10 +23,6 @@ export class Player {
       this.chips = options.chips
   }
 
-  clearHoleCards() {
-    this.holeCards = []
-  }
-
   resetBet() {
     this.bet = undefined
   }
@@ -59,7 +55,6 @@ export class Player {
   }
 
   fold() {
-    this.clearHoleCards()
     this.status = 'folded'
     this._game.nextPlayer()
   }

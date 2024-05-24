@@ -94,13 +94,13 @@ describe('flop', () => {
   })
 
   it('call after raised', () => {
-    game.player.raise(100)
     game.player.fold()
+    game.player.raise(100)
     game.player.fold()
     game.player.call()
     game.player.fold()
     expect(game.round).toBe('turn')
-    expect(game.player.name).toBe('a')
+    expect(game.player.name).toBe('b')
     expect(game.bet).toBe(0)
     expect(game.pot).toBe(300)
   })

@@ -91,7 +91,7 @@ export class TexasHoldem extends Game {
   nextPlayer() {
     if (this.unfoldedPlayers.length === 1) {
       this.unfoldedPlayers[0].scoop()
-      this.status = 'finished'
+      this.onFinish()
       return
     }
 
@@ -115,7 +115,15 @@ export class TexasHoldem extends Game {
   }
 
   nextRound() {
-    this._player = this._dealer
+    let _i = this._dealer
+    const to = this.players.length + this._dealer - 1
+    for (_i; _i < to; _i++) {
+      if (this.players[_i].status === 'active') {
+        this._player = _i
+        break
+      }
+    }
+
     this._turn = this._turn + 1
     this.bet = 0
     this.players.forEach((player) => {
@@ -130,8 +138,6 @@ export class TexasHoldem extends Game {
       this.onRiver()
     if (this._turn === 4)
       this.onShowdown()
-
-    console.log('Next round:', this.round)
   }
 
   onFlop() {
@@ -141,8 +147,6 @@ export class TexasHoldem extends Game {
       this.deal(),
       this.deal(),
     ]
-
-    console.log('Flop:', this.communityCards)
   }
 
   onTurn() {
@@ -151,8 +155,6 @@ export class TexasHoldem extends Game {
       ...this.communityCards,
       this.deal(),
     ]
-
-    console.log('Turn:', this.communityCards)
   }
 
   onRiver() {
@@ -161,12 +163,15 @@ export class TexasHoldem extends Game {
       ...this.communityCards,
       this.deal(),
     ]
-
-    console.log('River:', this.communityCards)
   }
 
   onShowdown() {
     this.round = 'showdown'
+    this.onFinish()
+  }
+
+  onFinish() {
+    this.status = 'finished'
   }
 
   shuffle() {
@@ -196,7 +201,7 @@ export class TexasHoldem extends Game {
 
   get isEven() {
     return this.unfoldedPlayers.every(({ bet, status }) => {
-      if (bet === undefined)
+      if (bet === undefined || status === 'folded')
         return false
       return status === 'all-in' || bet === this.bet
     })

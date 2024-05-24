@@ -1,4 +1,6 @@
 import { nanoid } from 'nanoid'
+import { calcRank, isConsecutive } from '../utils'
+import { RANK } from '../consts'
 import type { Card } from './card'
 import type { TexasHoldem } from './game'
 
@@ -21,6 +23,8 @@ export class Player {
     this.name = options.name ?? this.id
     if (options.chips)
       this.chips = options.chips
+    if (options.holeCards)
+      this.holeCards = options.holeCards
   }
 
   resetBet() {
@@ -61,6 +65,38 @@ export class Player {
 
   scoop() {
     this.chips += this._game.pot ?? 0
+  }
+
+  lt(player: Player): 1 | 0 | -1 {
+    let res = 0
+
+    const mine = [...(this._game?.communityCards ?? []), ...this.holeCards]
+    const hers = [...(this._game?.communityCards ?? []), ...player.holeCards]
+    const myRank = calcRank(mine)
+    const herRank = calcRank(hers)
+
+    if (myRank !== herRank)
+      res = myRank - herRank
+
+    if ([RANK.STRAIGHT, RANK.STRAIGHT_FLUSH].includes(myRank)) {
+      if (!isConsecutive(mine) && !isConsecutive(hers))
+        return 0
+      if (!isConsecutive(mine) && isConsecutive(hers))
+        return -1
+      if (isConsecutive(mine) && isConsecutive(hers))
+        return 1
+    }
+
+    const myMax = mine.reduce((p, c) => (p.rank > c.rank ? p : c))
+    const herMax = hers.reduce((p, c) => (p.rank > c.rank ? p : c))
+
+    res = myMax.rank - herMax.rank
+
+    if (res > 0)
+      return 1
+    if (res < 0)
+      return -1
+    return 0
   }
 
   get data() {

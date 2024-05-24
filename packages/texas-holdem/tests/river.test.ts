@@ -20,17 +20,23 @@ describe('river', () => {
     game.join(playerE)
 
     game.start()
+
+    // pre-flop
     game.player.call()
     game.player.call()
     game.player.call()
     game.player.call()
     game.player.call()
+
+    // flop
     game.player.raise(100)
     game.player.fold()
     game.player.fold()
     game.player.raise(200)
     game.player.fold()
     game.player.call()
+
+    // turn
     game.player.check()
     game.player.raise(100)
     game.player.call()

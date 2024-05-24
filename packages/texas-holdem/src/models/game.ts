@@ -3,8 +3,9 @@ import type { Card } from './card'
 import { Deck } from './deck'
 import type { Player } from './player'
 
-export type Round = undefined | 'pre-flop' | 'flop' | 'turn' | 'river' | 'showdown'
-export type Event = 'call' | 'raise' | 'fold' | 'check' | 'all-in'
+type Status = 'pending' | 'ongoing' | 'finished'
+type Round = undefined | 'pre-flop' | 'flop' | 'turn' | 'river' | 'showdown'
+type Event = 'call' | 'raise' | 'fold' | 'check' | 'all-in'
 
 export class Game {
   start(..._: any) {}
@@ -22,6 +23,7 @@ export class TexasHoldem extends Game {
   public maxPlayers: number = 10
   public pot: number = 0
   public bet: number = 0
+  public status: Status = 'pending'
 
   private _turn = 0
   private _player = 0
@@ -48,6 +50,7 @@ export class TexasHoldem extends Game {
     if (this.players.length < 2)
       return
 
+    this.status = 'ongoing'
     this.decks = [new Deck()]
     this.shuffle()
 
@@ -88,6 +91,7 @@ export class TexasHoldem extends Game {
   nextPlayer() {
     if (this.unfoldedPlayers.length === 1) {
       this.unfoldedPlayers[0].scoop()
+      this.status = 'finished'
       return
     }
 
@@ -98,12 +102,13 @@ export class TexasHoldem extends Game {
       return
     }
 
-    this.nextIndex()
-
     if (this.isEven) {
+      this.nextIndex()
       this.nextRound()
       return
     }
+
+    this.nextIndex()
 
     if (['all-in', 'folded'].includes(this.player.status))
       this.nextPlayer()
@@ -190,7 +195,7 @@ export class TexasHoldem extends Game {
   }
 
   get isEven() {
-    return this.players.every(({ bet, status }) => {
+    return this.unfoldedPlayers.every(({ bet, status }) => {
       if (bet === undefined)
         return false
       return status === 'all-in' || bet === this.bet

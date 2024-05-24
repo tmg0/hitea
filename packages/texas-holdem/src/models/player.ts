@@ -38,13 +38,14 @@ export class Player {
   call() {
     const _diff = this._game.bet - (this.bet ?? 0)
     this.bet = this._game.bet
-    this.chips = this.chips = _diff
+    this.chips = this.chips - _diff
     this._game.pot = this._game.pot + _diff
     this._game.nextPlayer()
   }
 
   check() {
-    this.bet = undefined
+    this.bet = 0
+    this._game.nextPlayer()
   }
 
   raise(value: number) {

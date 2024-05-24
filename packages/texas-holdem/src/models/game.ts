@@ -25,7 +25,7 @@ export class TexasHoldem extends Game {
   public pot: number = 0
   public bet: number = 0
   public status: Status = 'pending'
-  public winner: Player | undefined
+  public winners: Player[] = []
 
   private _turn = 0
   private _player = 0
@@ -92,7 +92,7 @@ export class TexasHoldem extends Game {
 
   nextPlayer() {
     if (this.unfoldedPlayers.length === 1) {
-      this.unfoldedPlayers[0].scoop()
+      this.winners = this.unfoldedPlayers
       this.onFinish()
       return
     }
@@ -168,21 +168,23 @@ export class TexasHoldem extends Game {
   }
 
   onShowdown() {
-    let winner = this.players[0]
+    let _winners: Player[] = [this.players[0]]
 
     for (const player of this.players) {
-      if (player.lt(winner) > 0)
-        winner = player
+      if (player.lt(_winners[0]) > 0)
+        _winners = [player]
+      if (player.lt(_winners[0]) === 0)
+        _winners.push(player)
     }
 
     this.round = 'showdown'
+    this.winners = _winners
     this.onFinish()
-
-    this.winner = winner
   }
 
   onFinish() {
     this.status = 'finished'
+    this.winners.forEach(winner => winner.scoop())
   }
 
   shuffle() {

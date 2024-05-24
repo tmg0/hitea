@@ -64,7 +64,7 @@ export class Player {
   }
 
   scoop() {
-    this.chips += this._game.pot ?? 0
+    this.chips += (this._game.pot / this._game.winners.length) ?? 0
   }
 
   lt(player: Player): 1 | 0 | -1 {

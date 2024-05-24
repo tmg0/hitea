@@ -68,7 +68,7 @@ export class Player {
       id: this.id,
       name: this.name,
       chips: this.chips,
-      holeCards: [],
+      holeCards: this._game.round === 'showdown' ? this.holeCards : [],
       bet: this.bet,
       status: this.status,
     }

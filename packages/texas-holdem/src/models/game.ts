@@ -5,7 +5,6 @@ import type { Player } from './player'
 
 type Status = 'pending' | 'ongoing' | 'finished'
 type Round = undefined | 'pre-flop' | 'flop' | 'turn' | 'river' | 'showdown'
-type Event = 'call' | 'raise' | 'fold' | 'check' | 'all-in'
 
 export class Game {
   start(..._: any) {}
@@ -190,18 +189,13 @@ export class TexasHoldem extends Game {
     return _d.deal()!
   }
 
-  handler(event: Event, args: any) {
-    if (event === 'raise')
-      this.player.raise(args)
-  }
-
   get isEmpty() {
     return this.players.length < 1
   }
 
   get isEven() {
     return this.unfoldedPlayers.every(({ bet, status }) => {
-      if (bet === undefined || status === 'folded')
+      if (bet === undefined)
         return false
       return status === 'all-in' || bet === this.bet
     })

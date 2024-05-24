@@ -94,6 +94,15 @@ io.on('connection', async (socket) => {
     io.to(room.id).emit('game:start')
   })
 
+  socket.on('player:event', ({ event, data }: any) => {
+    if (!room)
+      return
+    if (player.id !== room.game.player.id)
+      return
+    room.game.player?.[event]?.(data)
+    io.to(room.id).emit('room:get', new Response(room.data))
+  })
+
   socket.on('message:send', (content: string) => {
     if (!room)
       return

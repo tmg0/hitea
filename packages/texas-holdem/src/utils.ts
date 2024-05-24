@@ -17,8 +17,16 @@ export function isStraightFlush(_: Card[]) {
   return true
 }
 
-export function isFourOfAKind(_: Card[]) {
-  return true
+export function isFourOfAKind(cards: Card[]) {
+  const counts: Record<string, number> = {}
+
+  cards.forEach((card) => {
+    if (!counts[card.rank])
+      counts[card.rank] = 0
+    counts[card.rank]++
+  })
+
+  return Object.values(counts).some(value => value === 4)
 }
 
 export function isFullHouse(_: Card[]) {

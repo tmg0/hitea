@@ -10,6 +10,8 @@ export class Game {
   start(..._: any) {}
   join(..._: any) {}
   exit(..._: any) {}
+
+  get player(): any { return {} }
   get isEmpty(): boolean { return true }
   get data(): any { return this }
 }
